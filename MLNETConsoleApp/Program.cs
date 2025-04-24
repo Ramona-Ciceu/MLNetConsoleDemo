@@ -72,10 +72,11 @@ class Program
         {
             Console.WriteLine($" {op} {dir} → Win Chance: {prob:P0}");
         }
-        // ⚠ Warn for low confidence
+        //  Warn for low confidence
         if (best.prob == 0)
         {
             Console.WriteLine("\n Warning: No winning move predicted. Proceed with caution!");
+            Console.WriteLine(" Consider using a Luck Card, changing direction, or playing a defensive move.");
         }
         // Display suggestions
         Console.WriteLine("\n Path Suggestion:");
