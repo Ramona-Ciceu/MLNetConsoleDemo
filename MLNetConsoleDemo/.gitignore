@@ -1,0 +1,8 @@
+﻿game_data.csv
+*.zip
+bin/
+obj/
+.vs/
+
+
+
