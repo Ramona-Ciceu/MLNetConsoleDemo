@@ -65,7 +65,18 @@ class Program
 
         // Sort and select best option
         var best = predictions.OrderByDescending(p => p.prob).First();
-
+        //  Show top 3 best predictions
+        var top3 = predictions.OrderByDescending(p => p.prob).Take(3);
+        Console.WriteLine("\n Top 3 Suggestions:");
+        foreach (var (op, dir, prob) in top3)
+        {
+            Console.WriteLine($" {op} {dir} → Win Chance: {prob:P0}");
+        }
+        // ⚠ Warn for low confidence
+        if (best.prob == 0)
+        {
+            Console.WriteLine("\n Warning: No winning move predicted. Proceed with caution!");
+        }
         // Display suggestions
         Console.WriteLine("\n Path Suggestion:");
         Console.WriteLine($" Operation: {best.op}");
