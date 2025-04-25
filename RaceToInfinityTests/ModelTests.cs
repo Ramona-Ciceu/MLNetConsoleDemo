@@ -43,6 +43,6 @@ public class ModelTests
         };
 
         var prediction = engine.Predict(sample);
-        Assert.InRange(prediction.Probability, 0, 1);
+        Assert.InRange(prediction.Score, 0, 1);
     }
 }

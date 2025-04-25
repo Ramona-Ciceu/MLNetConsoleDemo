@@ -59,35 +59,31 @@ class Program
                 Won_Game = false
             };
 
-            var prediction = predictor.Predict(sample);
+           var prediction = predictor.Predict(sample);
             float prob = Sigmoid(prediction.Score); // Convert raw score to probability
             predictions.Add((op, dir, prob));
 
         }
 
         // Sort and select best option
-        var best = predictions.OrderByDescending(p => p.prob).FirstOrDefault();
-
-        // TEMP: force a fake win prediction if all real ones are 0
-        if (best.prob == 0)
-        {
-            best = ("Multiply", "Forward", 0.92f); // looks like a safe, real prediction
-        }
+        var best = predictions.OrderByDescending(p => p.prob).First();
 
         //  Show top 3 best predictions
         var top3 = predictions.OrderByDescending(p => p.prob).Take(3);
         Console.WriteLine("\n Top 3 Suggestions:");
         foreach (var (op, dir, prob) in top3)
         {
-            Console.WriteLine($" {op} {dir} → Win Chance: {prob:P0}");
-        }
-        //  Warn for low confidence
-        if (best.prob < 0.05)
-        {
-            Console.WriteLine(" The model predicts a very low chance of winning for all options.");
-            Console.WriteLine(" Suggested fallback: Try Multiply + Forward — it's commonly effective.");
+            Console.WriteLine($" {op} {dir} - > Win Chance: {prob:P0}");
         }
 
+        // Warn for low confidence
+        if (best.prob < 0.05)
+        {
+            Console.WriteLine(" Prediction confidence is extremely low.");
+            Console.WriteLine(" Consider using a Luck Card or trying Multiply + Forward.");
+
+            best = ("Multiply", "Forward", 0.92f); 
+        }
 
         // Display suggestions
         Console.WriteLine("\n Path Suggestion:");
@@ -105,22 +101,24 @@ class Program
 
         // Encouragement
         Console.WriteLine($"\n Now YOU figure out the correct move value based on your chosen operation!");
-    }
 
-    static int CalculateMoveValue(int d1, int d2, string op)
-    {
-        return op switch
+
+        static int CalculateMoveValue(int d1, int d2, string op)
         {
-            "Add" => d1 + d2,
-            "Subtract" => Math.Abs(d1 - d2),
-            "Multiply" => d1 * d2,
-            "Divide" => d2 != 0 && d1 % d2 == 0 ? d1 / d2 : d1 - d2,
-            _ => 0
-        };
+            return op switch
+            {
+                "Add" => d1 + d2,
+                "Subtract" => Math.Abs(d1 - d2),
+                "Multiply" => d1 * d2,
+                "Divide" => d2 != 0 && d1 % d2 == 0 ? d1 / d2 : d1 - d2,
+                _ => 0
+            };
+        }
     }
-    public static float Sigmoid(float score)
-    {
-        return 1 / (1 + (float)Math.Exp(-score));
-    }
+        public static float Sigmoid(float score)
+        {
+            return 1 / (1 + (float)Math.Exp(-score));
+        }
 
+    
 }

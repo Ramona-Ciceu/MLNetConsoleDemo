@@ -22,6 +22,29 @@ class Program
         var mlContext = new MLContext();
 
 
+        // Create synthetic data
+        var synthetic_data = new List<GameData>();
+
+        // Generate 1000 synthetic winning examples (e.g., 200+ credits)
+        for (int i = 0; i < 1000; i++)
+        {
+            synthetic_data.Add(new GameData
+            {
+                Player_ID = 1,
+                Dice_Roll_1 = 6,
+                Dice_Roll_2 = 6,
+                Math_Operation = "Multiply",  // Example operation
+                Move_Direction = "Forward",   // You can vary this
+                Move_Value = 12,  // Example of move value when player rolls high
+                Resulting_Position = 60,  // Simulate center path
+                Credits_Before = 200,  // Simulating 200 credits
+                Credits_After = 200,   // Player's credits remain the same after reaching 200
+                Luck_Card_Used = "None",
+                Opponent_Interaction = "None",
+                Decision_Taken = "Reached center with 200 credits", // Example action
+                Won_Game = true  // Mark as a win
+            });
+        }
 
         /* *******************************************
         * Step 2: Load Data from csv
@@ -40,27 +63,19 @@ class Program
             Console.WriteLine($"Columns: {columns.Length}");
         }
 
-            IDataView data = mlContext.Data.LoadFromTextFile<GameData>(
-                path: dataPath,
-                hasHeader: true,
-               separatorChar: ',',         
-               allowQuoting: true,          
-              allowSparse: false
-            );
+        IDataView data = mlContext.Data.LoadFromTextFile<GameData>(
+            path: dataPath,
+            hasHeader: true,
+           separatorChar: ',',
+           allowQuoting: true,
+          allowSparse: false
+        );
 
 
         /* **********************************************
                * DATA QUALITY CHECK                  
                * Preview first 10 rows for structural integrity
                * Helps identify missing values or format issues
-       
-        Console.WriteLine("===== First 10 Rows =====");
-        var dataPreview = mlContext.Data.CreateEnumerable<GameData>(data, reuseRowObject: false).Take(10);
-        foreach (var row in dataPreview)
-        {
-            Console.WriteLine($"Player_ID: {row.Player_ID}, Dice_Roll_1: {row.Dice_Roll_1}, Dice_Roll_2: {row.Dice_Roll_2}, Math_Operation: {row.Math_Operation}, Move_Direction: {row.Move_Direction}, Move_Value: {row.Move_Value}, Credits_Before: {row.Credits_Before}, Opponent_Interaction: {row.Opponent_Interaction}");
-        }
-
         /* **********************************************
 * FULL DATA VISUALIZATION                       *
 * Inspect entire dataset (caution with big data)*
@@ -90,12 +105,12 @@ class Program
           * 3. Combine features into single vector      
           * 4. Apply machine learning algorithm          
         ********************************************** */
-       
+
         var pipeline = mlContext.Transforms
        .ReplaceMissingValues("Dice_Roll_1", replacementMode: MissingValueReplacingEstimator.ReplacementMode.Mean)
        .Append(mlContext.Transforms.ReplaceMissingValues("Dice_Roll_2", replacementMode: MissingValueReplacingEstimator.ReplacementMode.Mean))
 
-       // One-hot encode string categorical features
+                // One-hot encode string categorical features
                 .Append(mlContext.Transforms.Categorical.OneHotEncoding("Math_Operation_Encoded", nameof(GameData.Math_Operation)))
                 .Append(mlContext.Transforms.Categorical.OneHotEncoding("Move_Direction_Encoded", nameof(GameData.Move_Direction)))
        .Append(mlContext.Transforms.Categorical.OneHotEncoding("Position_Type_Encoded", nameof(GameData.Position_Type)))
@@ -103,7 +118,7 @@ class Program
                 .Append(mlContext.Transforms.Categorical.OneHotEncoding("Opponent_Interaction_Encoded", nameof(GameData.Opponent_Interaction)))
        .Append(mlContext.Transforms.Categorical.OneHotEncoding("Decision_Taken_Encoded", nameof(GameData.Decision_Taken)))
 
-       // Combine all features into one Features vector
+                // Combine all features into one Features vector
                 .Append(mlContext.Transforms.Concatenate("Features",
                     nameof(GameData.Player_ID),
                     nameof(GameData.Dice_Roll_1),
@@ -120,7 +135,7 @@ class Program
            "Decision_Taken_Encoded"
                 ))
 
-           // Add the ML algorithm
+                // Add the ML algorithm
                 .Append(mlContext.BinaryClassification.Trainers.FastForest(
                     labelColumnName: nameof(GameData.Won_Game),
                     featureColumnName: "Features",
@@ -134,8 +149,8 @@ class Program
              * STEP 5-6: Model Training    
              * Fit() method executes the pipeline on data
              * This is where actual computation happens  *********************************************** */
-           Console.WriteLine("===== Training the model =====");
-            var model = pipeline.Fit(trainSet);
+        Console.WriteLine("===== Training the model =====");
+        var model = pipeline.Fit(trainSet);
 
         /* **********************************************
             * STEP 7: Model Evaluation  
@@ -190,7 +205,7 @@ class Program
 
             // ===== Cross-Validation Results =====
             var cvResults = mlContext.BinaryClassification.CrossValidate(data, pipeline, numberOfFolds: 5, labelColumnName: "Won_Game");
-           Console.WriteLine("\n===== Cross-Validation Results =====");
+            Console.WriteLine("\n===== Cross-Validation Results =====");
             int i = 1;
             foreach (var fold in cvResults)
             {
@@ -268,9 +283,9 @@ class Program
           * Includes both model and data schema          
         ********************************************** */
         mlContext.Model.Save(model, trainSet.Schema, "C:\\Users\\RC782\\source\\repos\\MLNetConsoleDemo\\RaceToInfinityModel.zip");
-            Console.WriteLine("Press any key to exit.");
-            Console.ReadKey();
-        }
+        Console.WriteLine("Press any key to exit.");
+        Console.ReadKey();
+    }
 
     public static float Sigmoid(float score)
     {

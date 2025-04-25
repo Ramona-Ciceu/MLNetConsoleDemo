@@ -123,6 +123,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.ML">
+      <Version>4.0.2</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.ML.FastTree" Version="*" />
   </ItemGroup>
   <ItemGroup>
