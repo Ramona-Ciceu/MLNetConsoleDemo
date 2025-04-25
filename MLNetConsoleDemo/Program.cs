@@ -11,6 +11,7 @@ using System.Collections.Generic;
 
 class Program
 {
+
     static void Main(string[] args)
     {
         /* **********************************************
@@ -78,9 +79,9 @@ class Program
             * TestFraction: 0.2 → 20% for validation       
          ********************************************** */
 
-        var split = mlContext.Data.TrainTestSplit(data, testFraction: 0.2);
-            var trainSet = split.TrainSet;
-            var testSet = split.TestSet;
+        var split = mlContext.Data.TrainTestSplit(data, testFraction: 0.2, seed: 1);
+        var trainSet = split.TrainSet;
+        var testSet = split.TestSet;
 
         /* **********************************************
           * STEP 4: Data Transformation Pipeline         
@@ -119,26 +120,28 @@ class Program
            "Decision_Taken_Encoded"
                 ))
 
-       // Add the ML algorithm
-                .Append(mlContext.BinaryClassification.Trainers.FastTree(
+           // Add the ML algorithm
+                .Append(mlContext.BinaryClassification.Trainers.FastForest(
                     labelColumnName: nameof(GameData.Won_Game),
                     featureColumnName: "Features",
                     numberOfLeaves: 20,
                     numberOfTrees: 100
-                ));
+                ))
+                .Append(mlContext.Transforms.CopyColumns("Probability", "Score"));
 
 
         /* **********************************************
              * STEP 5-6: Model Training    
              * Fit() method executes the pipeline on data
              * This is where actual computation happens  *********************************************** */
-        Console.WriteLine("===== Training the model =====");
+           Console.WriteLine("===== Training the model =====");
             var model = pipeline.Fit(trainSet);
 
         /* **********************************************
             * STEP 7: Model Evaluation  
             * Transform test data through model 
-            * Calculate quality metrics   ********************************************** */
+            * Calculate quality metrics  
+        *********************************************** */
         try
         {
             Console.WriteLine("===== Evaluating the model =====");
@@ -148,21 +151,26 @@ class Program
                                         .Select(pred => new
                                         {
                                             PredictedWin = pred.PredictedWin,
-                                            Score = pred.Probability
+                                            Probability = Sigmoid(pred.Score)
                                         })
                                         .ToList();
+            foreach (var item in result)
+            {
+                Console.WriteLine($"PredictedWin: {item.PredictedWin}, Probability: {item.Probability:P2}");
+            }
+
             // Print results to the console
             Console.WriteLine("===== Results =====");
             // Filter predictions with probability > 0.6 and sort descending
             var likelyWins = result
-                .Where(r => r.Score > 0.6)
-                .OrderByDescending(r => r.Score)
+                .Where(r => r.Probability > 0.6)
+                .OrderByDescending(r => r.Probability)
                 .ToList();
 
             Console.WriteLine("===== High-Probability Wins (> 60%) =====");
             foreach (var item in likelyWins)
             {
-                Console.WriteLine($"PredictedWin: {item.PredictedWin}, Probability: {item.Score:P2}");
+                Console.WriteLine($"PredictedWin: {item.PredictedWin}, Probability: {item.Probability:P2}");
             }
 
             Console.WriteLine($"Total High-Probability Predictions: {likelyWins.Count}");
@@ -179,13 +187,35 @@ class Program
             Console.WriteLine($"AUC: {metrics.AreaUnderRocCurve:P2}");
             // Balance of precision/recall
             Console.WriteLine($"F1 Score: {metrics.F1Score:P2}");
+
+            // ===== Cross-Validation Results =====
+            var cvResults = mlContext.BinaryClassification.CrossValidate(data, pipeline, numberOfFolds: 5, labelColumnName: "Won_Game");
+           Console.WriteLine("\n===== Cross-Validation Results =====");
+            int i = 1;
+            foreach (var fold in cvResults)
+            {
+                Console.WriteLine($"Fold {i++}:");
+                Console.WriteLine($"  Accuracy: {fold.Metrics.Accuracy:P2}");
+                Console.WriteLine($"  AUC: {fold.Metrics.AreaUnderRocCurve:P2}");
+                Console.WriteLine($"  F1 Score: {fold.Metrics.F1Score:P2}");
+            }
+            // Calculate average metrics across all folds
+            var avgAccuracy = cvResults.Average(f => f.Metrics.Accuracy);
+            var avgAUC = cvResults.Average(f => f.Metrics.AreaUnderRocCurve);
+            var avgF1 = cvResults.Average(f => f.Metrics.F1Score);
+
+            // Print average
+            Console.WriteLine("\n===== Cross-Validation (Averages) =====");
+            Console.WriteLine($"Avg Accuracy: {avgAccuracy:P2}");
+            Console.WriteLine($"Avg AUC: {avgAUC:P2}");
+            Console.WriteLine($"Avg F1 Score: {avgF1:P2}");
+
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
 
         }
-
 
         /* **********************************************
             * STEP 8: Make Single Prediction  
@@ -226,7 +256,8 @@ class Program
         Console.WriteLine("===== Single Prediction =====");
         foreach (var result in results)
         {
-            Console.WriteLine($"Predicted Win Probability: {result.Probability:P2}");
+            float prob = Sigmoid(result.Score);
+            Console.WriteLine($"Predicted Win Probability: {prob:P2}");
             Console.WriteLine($"Confidence Threshold: {result.PredictedWin}");
         }
 
@@ -240,5 +271,11 @@ class Program
             Console.WriteLine("Press any key to exit.");
             Console.ReadKey();
         }
+
+    public static float Sigmoid(float score)
+    {
+        return 1 / (1 + (float)Math.Exp(-score));
     }
+
+}
 

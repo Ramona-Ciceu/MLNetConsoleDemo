@@ -30,6 +30,6 @@ namespace MLNetConsoleDemo
     public class GamePrediction
     {
         [ColumnName("PredictedLabel")] public bool PredictedWin { get; set; }
-        [ColumnName("Probability")] public float Probability { get; set; }
+        [ColumnName("Score")] public float Score { get; set; }
     }
 }
