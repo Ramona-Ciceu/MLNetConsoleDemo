@@ -59,7 +59,7 @@ class Program
         foreach (var line in lines)
         {
             Console.WriteLine($"RAW LINE: {line}");
-            var columns = line.Split('\t'); // or ',' if comma-separated
+            var columns = line.Split('\t'); 
             Console.WriteLine($"Columns: {columns.Length}");
         }
 
@@ -148,7 +148,8 @@ class Program
         /* **********************************************
              * STEP 5-6: Model Training    
              * Fit() method executes the pipeline on data
-             * This is where actual computation happens  *********************************************** */
+             * This is where actual computation happens 
+         *********************************************** */
         Console.WriteLine("===== Training the model =====");
         var model = pipeline.Fit(trainSet);
 
