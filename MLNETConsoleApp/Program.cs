@@ -50,13 +50,14 @@ class Program
             var prediction = predictor.Predict(testGame);
             Console.WriteLine($"Prediction: {prediction.PredictedWin}, Probability: {prediction.Probability:P2}");
 
-            var predictedWin = prediction.PredictedWin ? "Win" : "Lose";
+           
+
 
             // Display the results
             Console.WriteLine($"Test Game: Dice Roll 1: {game.Dice_Roll_1}, Dice Roll 2: {game.Dice_Roll_2}, Credits Before: {game.Credits}");
             Console.WriteLine($"Operation: {game.Operation}, Direction: {game.Direction}");
             Console.WriteLine($"Expected Outcome: {(game.ExpectedOutcome ? "Win" : "Lose")}");
-            Console.WriteLine($"Model Prediction: {predictedWin}");
+            Console.WriteLine($"Predicted Win: {prediction.PredictedWin}");
             Console.WriteLine($"Prediction Probability: {prediction.Probability:P2}");
             Console.WriteLine(new string('-', 40));
         }
