@@ -15,7 +15,7 @@ class Program
         var predictor = mlContext.Model.CreatePredictionEngine<GameData, GamePrediction>(model);
 
         // Displaying the header of the simulation
-        Console.WriteLine("🎲 Race to Infinity — Smart Move Advisor 🎲");
+        Console.WriteLine("Race to Infinity — Smart Move Advisor ");
         Console.WriteLine("Simulating Test Games...\n");
 
         // Define some simulated games

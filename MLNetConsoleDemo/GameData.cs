@@ -24,7 +24,7 @@ namespace MLNetConsoleDemo
         [LoadColumn(10)] public string Luck_Card_Used { get; set; }
         [LoadColumn(11)] public string Opponent_Interaction { get; set; }
         [LoadColumn(12)] public string Decision_Taken { get; set; }
-        [LoadColumn(13)] public bool Won_Game { get; set; } // Label
+        [LoadColumn(13)] public bool Won_Game { get; set; } // Boolean for Win/Loss
     }
 
 
