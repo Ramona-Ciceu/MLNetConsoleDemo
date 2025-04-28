@@ -29,6 +29,7 @@ class Program
             string luckUsed = GetYesNoInput("Luck Card Used? (yes/no): ");
             string inLock = GetYesNoInput("In Lock? (yes/no): ");
             string opponentNearby = GetYesNoInput("Opponent Nearby? (yes/no): ");
+            string moveDirection = GetDirectionInput("Expected Move Direction? (forward/backward): ");
 
             var turnData = new GameData
             {
@@ -39,16 +40,18 @@ class Program
                 Luck_Card_Used = luckUsed,
                 In_Lock = inLock,
                 Opponent_Close = opponentNearby,
-                Best_Move_Operation = "" // Placeholder
+                Move_Direction = moveDirection,
+                Best_Move_Operation = "" // Placeholder, not needed during prediction
             };
 
             var prediction = predictor.Predict(turnData);
 
             Console.WriteLine($"\n=== AI Suggestion ===");
             Console.WriteLine($"Predicted Best Move: {prediction.PredictedMove}");
+            Console.WriteLine($"Expected Move Direction: {moveDirection}");
             Console.WriteLine("======================\n");
 
-            // Ask if they want to test another move
+            // Ask if they want to simulate another turn
             Console.Write("Do you want to simulate another turn? (yes/no): ");
             string again = Console.ReadLine().Trim().ToLower();
             keepPlaying = (again == "yes");
@@ -89,6 +92,23 @@ class Program
             }
         } while (input != "yes" && input != "no");
 
-        return char.ToUpper(input[0]) + input.Substring(1); // Make it "Yes" or "No"
+        return char.ToUpper(input[0]) + input.Substring(1); // Make "Yes"/"No"
+    }
+
+    // Helper method: Get Move Direction input
+    static string GetDirectionInput(string prompt)
+    {
+        string input;
+        do
+        {
+            Console.Write(prompt);
+            input = Console.ReadLine().Trim().ToLower();
+            if (input != "forward" && input != "backward")
+            {
+                Console.WriteLine("Please enter 'forward' or 'backward'.");
+            }
+        } while (input != "forward" && input != "backward");
+
+        return char.ToUpper(input[0]) + input.Substring(1); // Make "Forward"/"Backward"
     }
 }

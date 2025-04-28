@@ -11,6 +11,7 @@ namespace MLNetConsoleDemo
         [LoadColumn(4)] public string Luck_Card_Used { get; set; }  // Yes / No
         [LoadColumn(5)] public string In_Lock { get; set; }         // Yes / No
         [LoadColumn(6)] public string Opponent_Close { get; set; }  // Yes / No
-        [LoadColumn(7)] public string Best_Move_Operation { get; set; }  // Label: Add / Subtract / Multiply / Divide
+        [LoadColumn(7)] public string Move_Direction { get; set; }
+        [LoadColumn(8)] public string Best_Move_Operation { get; set; }  // Label: Add / Subtract / Multiply / Divide
     }
 }

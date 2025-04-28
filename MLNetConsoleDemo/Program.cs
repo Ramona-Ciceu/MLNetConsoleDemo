@@ -11,7 +11,7 @@ class Program
         var mlContext = new MLContext();
 
         // Load turn data
-        string dataPath = @"C:\Users\RC782\source\repos\turn_data.csv"; // <-- make sure this path points to your turn_data.csv
+        string dataPath = @"C:\Users\RC782\source\repos\turn_data.csv"; 
         var data = mlContext.Data.LoadFromTextFile<GameData>(
             path: dataPath,
             hasHeader: true,
@@ -26,23 +26,23 @@ class Program
 
         // Build the training pipeline
         var pipeline = mlContext.Transforms.Conversion.MapValueToKey("Label", nameof(GameData.Best_Move_Operation))
-            .Append(mlContext.Transforms.Categorical.OneHotEncoding("Luck_Card_Used_Encoded", nameof(GameData.Luck_Card_Used)))
-            .Append(mlContext.Transforms.Categorical.OneHotEncoding("In_Lock_Encoded", nameof(GameData.In_Lock)))
-            .Append(mlContext.Transforms.Categorical.OneHotEncoding("Opponent_Close_Encoded", nameof(GameData.Opponent_Close)))
-            .Append(mlContext.Transforms.Concatenate("Features",
-                nameof(GameData.Dice_Roll_1),
-                nameof(GameData.Dice_Roll_2),
-                nameof(GameData.Credits_Before),
-                nameof(GameData.Position_Before),
-                "Luck_Card_Used_Encoded",
-                "In_Lock_Encoded",
-                "Opponent_Close_Encoded"
-            ))
-            .Append(mlContext.MulticlassClassification.Trainers.LbfgsMaximumEntropy(
-                labelColumnName: "Label",
-                featureColumnName: "Features"
-            ))
-            .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel")); // map back to text label
+     .Append(mlContext.Transforms.Categorical.OneHotEncoding("Luck_Card_Used_Encoded", nameof(GameData.Luck_Card_Used)))
+     .Append(mlContext.Transforms.Categorical.OneHotEncoding("In_Lock_Encoded", nameof(GameData.In_Lock)))
+     .Append(mlContext.Transforms.Categorical.OneHotEncoding("Opponent_Close_Encoded", nameof(GameData.Opponent_Close)))
+     .Append(mlContext.Transforms.Categorical.OneHotEncoding("Move_Direction_Encoded", nameof(GameData.Move_Direction))) 
+     .Append(mlContext.Transforms.Concatenate("Features",
+         nameof(GameData.Dice_Roll_1),
+         nameof(GameData.Dice_Roll_2),
+         nameof(GameData.Credits_Before),
+         nameof(GameData.Position_Before),
+         "Luck_Card_Used_Encoded",
+         "In_Lock_Encoded",
+         "Opponent_Close_Encoded",
+         "Move_Direction_Encoded" 
+     ))
+     .Append(mlContext.MulticlassClassification.Trainers.LbfgsMaximumEntropy(labelColumnName: "Label", featureColumnName: "Features"))
+     .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
+
 
         // Train
         Console.WriteLine("===== Training Model =====");
