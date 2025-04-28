@@ -6,46 +6,45 @@ using MLNetConsoleDemo;
 
 public class DataTests
 {
-    private readonly string _dataPath = @"C:\Users\RC782\source\repos\game_data.csv";
+    private readonly string _dataPath = @"C:\Users\RC782\source\repos\turn_data.csv"; // <-- New dataset path
+
     [Fact]
     public void TestCsvHasValidColumns()
     {
         // Arrange
         var expectedColumns = new[] {
-        "Player_ID", "Dice_Roll_1", "Dice_Roll_2",
-        "Math_Operation", "Move_Direction", "Move_Value",
-        "Resulting_Position", "Position_Type", "Credits_Before",
-        "Credits_After", "Luck_Card_Used", "Opponent_Interaction",
-        "Decision_Taken", "Won_Game"
-    };
+            "Dice_Roll_1", "Dice_Roll_2", "Credits_Before",
+            "Position_Before", "Luck_Card_Used", "In_Lock",
+            "Opponent_Close", "Best_Move_Operation"
+        };
 
         // Act
         var firstLine = File.ReadLines(_dataPath).First();
         var actualColumns = firstLine
             .Split(',')
-            .Select(col => col.Trim('"')) // ✅ fix for quote-wrapped headers
+            .Select(col => col.Trim('"'))
             .ToArray();
 
         // Assert
         Assert.Equal(expectedColumns, actualColumns);
     }
 
-
-
     [Fact]
-    public void TestWonGameColumnHasBooleanValues()
+    public void TestBestMoveOperationHasValidValues()
     {
         // Arrange
         var mlContext = new MLContext();
         var data = mlContext.Data.LoadFromTextFile<GameData>(_dataPath, hasHeader: true, separatorChar: ',', allowQuoting: true);
 
         // Act
-        var winValues = mlContext.Data.CreateEnumerable<GameData>(data, reuseRowObject: false)
-            .Select(d => d.Won_Game)
+        var moveValues = mlContext.Data.CreateEnumerable<GameData>(data, reuseRowObject: false)
+            .Select(d => d.Best_Move_Operation)
             .Distinct()
             .ToList();
 
+        var validMoves = new[] { "Add", "Subtract", "Multiply", "Divide" };
+
         // Assert
-        Assert.All(winValues, v => Assert.True(v == true || v == false));
+        Assert.All(moveValues, move => Assert.Contains(move, validMoves));
     }
 }
