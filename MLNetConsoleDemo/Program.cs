@@ -287,11 +287,12 @@ class Program
         Console.WriteLine("Press any key to exit.");
         Console.ReadKey();
     }
-
+    // Sigmoid function to convert raw score to probability
     public static float Sigmoid(float score)
     {
-        return 1 / (1 + (float)Math.Exp(-score));
+        return 1 / (1 + (float)Math.Exp(-score));  // Sigmoid formula
     }
+
 
 }
 

@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace MLNetConsoleDemo
 {
     public class GameData
@@ -27,9 +28,4 @@ namespace MLNetConsoleDemo
     }
 
 
-    public class GamePrediction
-    {
-        [ColumnName("PredictedLabel")] public bool PredictedWin { get; set; }
-        [ColumnName("Score")] public float Score { get; set; }
-    }
 }
