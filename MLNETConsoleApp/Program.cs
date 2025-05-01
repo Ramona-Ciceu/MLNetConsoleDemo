@@ -31,6 +31,7 @@ class Program
             string opponentNearby = GetYesNoInput("Opponent Nearby? (yes/no): ");
             string moveDirection = GetDirectionInput("Expected Move Direction? (forward/backward): ");
 
+
             var turnData = new GameData
             {
                 Dice_Roll_1 = dice1,
@@ -48,6 +49,8 @@ class Program
 
             // Get class labels in the same order used during training
             string[] moveLabels = { "Add", "Subtract", "Multiply", "Divide" };
+          
+
 
             // Find the predicted index and confidence
             int predictedIndex = Array.IndexOf(moveLabels, prediction.PredictedMove);
