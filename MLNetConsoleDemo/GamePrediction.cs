@@ -11,6 +11,6 @@ namespace MLNetConsoleDemo
     public class GamePrediction
     {
         [ColumnName("PredictedLabel")]
-        public string PredictedMove { get; set; } // The predicted move: Add, Subtract, Multiply, Divide
+        public string PredictedMove { get; set; } 
     }
 }

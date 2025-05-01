@@ -6,7 +6,7 @@ using MLNetConsoleDemo;
 
 public class DataTests
 {
-    private readonly string _dataPath = @"C:\Users\RC782\source\repos\turn_data.csv"; // <-- New dataset path
+    private readonly string _dataPath = @"C:\Users\RC782\source\repos\turn_data.csv"; 
 
     [Fact]
     public void TestCsvHasValidColumns()
@@ -15,7 +15,7 @@ public class DataTests
         var expectedColumns = new[] {
             "Dice_Roll_1", "Dice_Roll_2", "Credits_Before",
             "Position_Before", "Luck_Card_Used", "In_Lock",
-            "Opponent_Close", "Best_Move_Operation"
+            "Opponent_Close","Move_Direction", "Best_Move_Operation"
         };
 
         // Act

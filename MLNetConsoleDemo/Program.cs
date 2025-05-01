@@ -1,4 +1,4 @@
-using Microsoft.ML;
+﻿using Microsoft.ML;
 using Microsoft.ML.Data;
 using MLNetConsoleDemo;
 using System;
@@ -8,9 +8,21 @@ class Program
 {
     static void Main(string[] args)
     {
+        /* **********************************************
+           * Step 1: Initialise MLContext
+           * MLContext is the core object in ML.NET
+           * It provides functions for data loading, model training, and evaluation.
+         ********************************************** */
         var mlContext = new MLContext();
 
-        // Load turn data
+
+        /* ************************************************************
+             * Step 2: Load Data from csv
+             * Loads a CSV file (turn_data.csv) into an IDataView (ML.NET's data format).
+             * Uses the GameData class (not shown in your code but must be defined elsewhere).
+             * hasHeader: true → The first row contains column names.
+             * separatorChar: ',' → Uses a comma as the delimiter.
+          ********************************************************************** */
         string dataPath = @"C:\Users\RC782\source\repos\turn_data.csv"; 
         var data = mlContext.Data.LoadFromTextFile<GameData>(
             path: dataPath,
@@ -19,7 +31,11 @@ class Program
             allowQuoting: true
         );
 
-        // Split into Train/Test
+        /* **********************************************
+            * STEP 3: Train/Test Split (80/20)              
+            * Random split preserves data distribution     
+            * TestFraction: 0.2 → 20% for validation       
+         ********************************************** */
         var split = mlContext.Data.TrainTestSplit(data, testFraction: 0.2, seed: 1);
         var trainSet = split.TrainSet;
         var testSet = split.TestSet;
@@ -43,12 +59,18 @@ class Program
      .Append(mlContext.MulticlassClassification.Trainers.LbfgsMaximumEntropy(labelColumnName: "Label", featureColumnName: "Features"))
      .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
 
-
-        // Train
+        /* **********************************************
+             * STEP 4: Model Training    
+             * Fit() method executes the pipeline on data
+        ************************************************* */
         Console.WriteLine("===== Training Model =====");
         var model = pipeline.Fit(trainSet);
 
-        // Evaluate
+        /* **********************************************
+            * STEP 5: Model Evaluation  
+            * Transform test data through model 
+            * Calculate quality metrics  
+        *********************************************** */
         Console.WriteLine("===== Evaluating Model =====");
         var predictions = model.Transform(testSet);
         var metrics = mlContext.MulticlassClassification.Evaluate(predictions);
@@ -57,7 +79,11 @@ class Program
         Console.WriteLine($"MacroAccuracy: {metrics.MacroAccuracy:P2}");
         Console.WriteLine($"LogLoss: {metrics.LogLoss:F4}");
 
-        // Save model
+        /* **********************************************
+        * STEP 6: Model Persistence                    
+        * Save trained model for later use 
+        * Includes both model and data schema          
+      ********************************************** */
         mlContext.Model.Save(model, trainSet.Schema, @"C:\Users\RC782\source\repos\RaceToInfinity_MovePredictor.zip");
 
         Console.WriteLine("Model training and saving complete! Press any key to EXIT");

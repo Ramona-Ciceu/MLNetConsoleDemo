@@ -4,7 +4,7 @@ using MLNetConsoleDemo;
 
 public class ModelTests
 {
-    private readonly string _modelPath = @"C:\Users\RC782\source\repos\RaceToInfinity_MovePredictor.zip"; // <-- Correct model
+    private readonly string _modelPath = @"C:\Users\RC782\source\repos\RaceToInfinity_MovePredictor.zip";
 
     [Fact]
     public void ModelLoadsSuccessfully()
