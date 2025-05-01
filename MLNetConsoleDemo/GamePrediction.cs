@@ -11,6 +11,8 @@ namespace MLNetConsoleDemo
     public class GamePrediction
     {
         [ColumnName("PredictedLabel")]
-        public string PredictedMove { get; set; } 
+        public string PredictedMove { get; set; }
+        [ColumnName("Score")]
+        public float[] Score { get; set; }  // probability scores for each class
     }
 }

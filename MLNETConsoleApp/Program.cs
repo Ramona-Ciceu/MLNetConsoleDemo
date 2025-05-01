@@ -46,10 +46,27 @@ class Program
 
             var prediction = predictor.Predict(turnData);
 
+            // Get class labels in the same order used during training
+            string[] moveLabels = { "Add", "Subtract", "Multiply", "Divide" };
+
+            // Find the predicted index and confidence
+            int predictedIndex = Array.IndexOf(moveLabels, prediction.PredictedMove);
+            float confidence = prediction.Score[predictedIndex];
+
+            // Determine risk level based on confidence
+            string riskLevel;
+            if (confidence >= 0.8f) riskLevel = "Low Risk";
+            else if (confidence >= 0.5f) riskLevel = "Medium Risk";
+            else riskLevel = "High Risk";
+
+            // Display prediction and evaluation
             Console.WriteLine($"\n=== AI Suggestion ===");
             Console.WriteLine($"Predicted Best Move: {prediction.PredictedMove}");
+            Console.WriteLine($"Model Confidence: {confidence:P1}");
+            Console.WriteLine($"Risk Indicator: {riskLevel}");
             Console.WriteLine($"Expected Move Direction: {moveDirection}");
             Console.WriteLine("======================\n");
+
 
             // Ask if they want to simulate another turn
             Console.Write("Do you want to simulate another turn? (yes/no): ");
