@@ -49,7 +49,21 @@ class Program
 
             // Get class labels in the same order used during training
             string[] moveLabels = { "Add", "Subtract", "Multiply", "Divide" };
-          
+            // Estimate move value (you can later base this on predicted operation)
+            int moveValue = dice1 + dice2;
+            int forwardPosition = (int)turnData.Position_Before + moveValue;
+            int backwardPosition = (int)turnData.Position_Before - moveValue;
+
+
+            // Ensure positions stay within board boundaries
+            forwardPosition = Math.Min(forwardPosition, 70);
+            backwardPosition = Math.Max(backwardPosition, 0);
+
+            // Basic logic: prefer whichever is closer to center (e.g. 60 or 70)
+            int distanceForward = Math.Abs(60 - forwardPosition);
+            int distanceBackward = Math.Abs(60 - backwardPosition);
+
+            string bestPath = distanceForward <= distanceBackward ? "Forward" : "Backward";
 
 
             // Find the predicted index and confidence
@@ -68,6 +82,7 @@ class Program
             Console.WriteLine($"Model Confidence: {confidence:P1}");
             Console.WriteLine($"Risk Indicator: {riskLevel}");
             Console.WriteLine($"Expected Move Direction: {moveDirection}");
+            Console.WriteLine($"Suggested Path Based on Position: {bestPath}");
             Console.WriteLine("======================\n");
 
 
