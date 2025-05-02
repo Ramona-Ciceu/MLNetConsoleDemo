@@ -9,7 +9,7 @@ class Program
         var mlContext = new MLContext();
 
         // Load the trained Move Prediction model
-        var modelPath = @"C:\Users\RC782\source\repos\RaceToInfinity_MovePredictor.zip";
+        var modelPath = @"C:\Users\RC782\source\repos\RaceToInfinity.zip";
         var model = mlContext.Model.Load(modelPath, out _);
         var predictor = mlContext.Model.CreatePredictionEngine<GameData, GamePrediction>(model);
 

@@ -84,7 +84,7 @@ class Program
         * Save trained model for later use 
         * Includes both model and data schema          
       ********************************************** */
-        mlContext.Model.Save(model, trainSet.Schema, @"C:\Users\RC782\source\repos\RaceToInfinity_MovePredictor.zip");
+        mlContext.Model.Save(model, trainSet.Schema, @"C:\Users\RC782\source\repos\RaceToInfinity.zip");
 
         Console.WriteLine("Model training and saving complete! Press any key to EXIT");
         Console.ReadKey();
