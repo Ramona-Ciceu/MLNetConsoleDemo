@@ -6,7 +6,19 @@ using MLNetConsoleDemo;
 
 public class DataTests
 {
-    private readonly string _dataPath = @"C:\Users\RC782\source\repos\turn_data.csv"; 
+    private readonly string _dataPath;
+
+    public DataTests()
+    {
+        // Get bin/debug/net7.0 directory
+        string currentDir = Directory.GetCurrentDirectory();
+
+        // Go up 3 levels to project root
+        string projectDir = Directory.GetParent(currentDir)?.Parent?.Parent?.FullName;
+
+        // Set full path to CSV in the project root
+        _dataPath = Path.Combine(projectDir, "turn_data.csv");
+    }
 
     [Fact]
     public void TestCsvHasValidColumns()
@@ -15,7 +27,7 @@ public class DataTests
         var expectedColumns = new[] {
             "Dice_Roll_1", "Dice_Roll_2", "Credits_Before",
             "Position_Before", "Luck_Card_Used", "In_Lock",
-            "Opponent_Close","Move_Direction", "Best_Move_Operation"
+            "Opponent_Close", "Move_Direction", "Best_Move_Operation"
         };
 
         // Act
