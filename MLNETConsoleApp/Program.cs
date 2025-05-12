@@ -14,6 +14,8 @@ class Program
         string currentDir = Directory.GetCurrentDirectory();
         // Navigate up to the project root (bin → Debug → net7.0 → project folder)
         string projectDir = Directory.GetParent(currentDir)?.Parent?.Parent?.FullName;
+        // Now go to MLNetConsoleDemo (this is the correct folder name!)
+        string modelSourceDir = Path.Combine(projectDir, "MLNetConsoleDemo");
         // Build full path to the model file in the project root
         string modelPath = Path.Combine(projectDir, "RaceToInfinity.zip");
         // Load the model

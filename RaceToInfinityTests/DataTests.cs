@@ -15,6 +15,8 @@ public class DataTests
 
         // Go up 3 levels to project root
         string projectDir = Directory.GetParent(currentDir)?.Parent?.Parent?.FullName;
+        // Now go to MLNetConsoleDemo (this is the correct folder name!)
+        string modelSourceDir = Path.Combine(projectDir, "MLNetConsoleDemo");
 
         // Set full path to CSV in the project root
         _dataPath = Path.Combine(projectDir, "turn_data.csv");

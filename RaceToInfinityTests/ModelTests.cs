@@ -14,6 +14,8 @@ public class ModelTests
 
         // Navigate up to the project root (3 levels)
         string projectDir = Directory.GetParent(currentDir)?.Parent?.Parent?.FullName;
+        // Now go to MLNetConsoleDemo (this is the correct folder name!)
+        string modelSourceDir = Path.Combine(projectDir, "MLNetConsoleDemo");
 
         // Build full path to the model file in the project root
         _modelPath = Path.Combine(projectDir, "RaceToInfinity.zip");
