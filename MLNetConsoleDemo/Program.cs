@@ -2,6 +2,7 @@
 using Microsoft.ML.Data;
 using MLNetConsoleDemo;
 using System;
+using System.IO;
 using System.Linq;
 
 class Program
@@ -84,7 +85,16 @@ class Program
         * Save trained model for later use 
         * Includes both model and data schema          
       ********************************************** */
-        mlContext.Model.Save(model, trainSet.Schema, @"C:\Users\RC782\source\repos\RaceToInfinity.zip");
+        //: Get the current execution directory
+        string currentDir = Directory.GetCurrentDirectory();
+        // Navigate to the project root (go up 3 levels)
+        string projectDir = Directory.GetParent(currentDir)?.Parent?.Parent?.FullName;
+        // Build the model file path
+        string modelPath = Path.Combine(projectDir, "RaceToInfinity.zip");
+        //Save the model
+        mlContext.Model.Save(model, trainSet.Schema, modelPath);
+        // Confirm
+        Console.WriteLine($"Model saved successfully at: {modelPath}");
 
         Console.WriteLine("Model training and saving complete! Press any key to EXIT");
         Console.ReadKey();

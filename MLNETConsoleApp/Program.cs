@@ -9,9 +9,20 @@ class Program
         var mlContext = new MLContext();
 
         // Load the trained Move Prediction model
-        var modelPath = @"C:\Users\RC782\source\repos\RaceToInfinity.zip";
+        //Get current directory where the app is running 
+        // Get current working directory
+        string currentDir = Directory.GetCurrentDirectory();
+        // Navigate up to the project root (bin → Debug → net7.0 → project folder)
+        string projectDir = Directory.GetParent(currentDir)?.Parent?.Parent?.FullName;
+        // Build full path to the model file in the project root
+        string modelPath = Path.Combine(projectDir, "RaceToInfinity.zip");
+        // Load the model
         var model = mlContext.Model.Load(modelPath, out _);
+        // Create prediction engine
         var predictor = mlContext.Model.CreatePredictionEngine<GameData, GamePrediction>(model);
+        // Optional: confirm the model path
+        Console.WriteLine($"Model loaded from: {modelPath}");
+
 
         Console.WriteLine("Race to Infinity — Smart Move Advisor Simulation\n");
 
