@@ -24,13 +24,22 @@ class Program
              * hasHeader: true → The first row contains column names.
              * separatorChar: ',' → Uses a comma as the delimiter.
           ********************************************************************** */
-        string dataPath = @"C:\Users\RC782\source\repos\turn_data.csv"; 
+        // Get current working directory (e.g., bin/Debug/net7.0)
+        string currentDir = Directory.GetCurrentDirectory();
+        // Navigate to the project root (up 3 levels)
+        string projectDir = Directory.GetParent(currentDir)?.Parent?.Parent?.FullName;
+        // Build full path to the CSV file in the project root
+        string dataPath = Path.Combine(projectDir, "turn_data.csv");
+        // Load the data
         var data = mlContext.Data.LoadFromTextFile<GameData>(
             path: dataPath,
             hasHeader: true,
             separatorChar: ',',
             allowQuoting: true
         );
+
+        // Confirm path
+        Console.WriteLine($"CSV data loaded from: {dataPath}");
 
         /* **********************************************
             * STEP 3: Train/Test Split (80/20)              
@@ -85,11 +94,6 @@ class Program
         * Save trained model for later use 
         * Includes both model and data schema          
       ********************************************** */
-        //: Get the current execution directory
-        string currentDir = Directory.GetCurrentDirectory();
-        // Navigate to the project root (go up 3 levels)
-        string projectDir = Directory.GetParent(currentDir)?.Parent?.Parent?.FullName;
-        // Build the model file path
         string modelPath = Path.Combine(projectDir, "RaceToInfinity.zip");
         //Save the model
         mlContext.Model.Save(model, trainSet.Schema, modelPath);
